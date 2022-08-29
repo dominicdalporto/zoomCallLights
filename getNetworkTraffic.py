@@ -22,7 +22,6 @@ class findZoom:
                                 if hasattr(packet, 'udp'):
                                         self.source_address = packet.ip.src.rsplit('.', 2)[0]
                                         self.source_port = packet[packet.transport_layer].srcport
-                                        self.destination_address = packet.ip.dst
                                         portDict.update({self.source_address:self.source_port})
                         except AttributeError:
                                 pass
