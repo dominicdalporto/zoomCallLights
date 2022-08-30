@@ -1,4 +1,7 @@
 import pyshark
+import csv
+from datetime import date
+import time
 
 ports = ['3478', '3479', '8801', '8802', '8803', '8804', '8805', '8806', '8807', '8808',
          '8809', '8810']
@@ -13,7 +16,7 @@ with open('zoomIPs.txt', "r") as zoomIPs:
 
 capture = pyshark.LiveCapture(interface='en0')
 capture.sniff(timeout=10)
-print(capture)
+#print(capture)
 
 class findZoom:
         def sniff(self):
@@ -26,7 +29,7 @@ class findZoom:
                         except AttributeError:
                                 pass
         def detectAttributes(self):
-                print(portDict)
+                #print(portDict)
                 for ip in IPlist:
                         if ip in portDict.keys():
                                 self.zoomIP = ip
@@ -34,11 +37,19 @@ class findZoom:
                         if port in portDict.values():
                                 self.zoomPort = port
         def detectZoom(self):
-                try:
-                        if self.zoomIP in IPlist and self.zoomPort in ports:
-                                print("Zoom Active")
-                except AttributeError:
-                        print("Zoom not active")
+                today = date.today()
+                day = today.strftime("%Y%m%d")
+                now = time.strftime("%H:%M:%S")
+                print(now)
+                with open(f'logger_{day}.csv', 'a') as f:
+                        logger = csv.writer(f, delimiter=',', quoting=csv.QUOTE_NONE)
+                        try:
+                                if self.zoomIP in IPlist and self.zoomPort in ports:
+                                        print("Zoom active")
+                                        logger.writerow([now, "Zoom active"])
+                        except AttributeError:
+                                print("Zoom not active")
+                                logger.writerow([now, "Zoom not active"])
 
 sniffer = findZoom()
 sniffer.sniff()
